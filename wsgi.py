@@ -1,4 +1,6 @@
-def application(environ, start_response):
-    start_response('200 OK', [('Content-Type', 'text/html; charset=utf-8')])
-    return ['<!DOCTYPE html><html><meta charset="utf-8"><title>It works',
-            '</title><h1>It works!!!!!!shiqiu20190630 fengle</h1>']
+def simple_app(environ, start_response):
+    """Simplest possible application object"""
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/plain')]
+    start_response(status, response_headers)
+    return ['Hello world!\n']
