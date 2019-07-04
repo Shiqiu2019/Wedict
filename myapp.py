@@ -190,7 +190,8 @@ def login():
         # TODO: If using a one-way hash, you would also hash the user-submitted
         # password and do the comparison on the hashed versions.
         # if password == app.config['ADMIN_PASSWORD']:
-        if verify_password(stored_password, 'sq1904') == True:
+        # if verify_password(stored_password, 'sq1904') == True:
+        if verify_password(stored_password, password) == True:
             session['logged_in'] = True
             session.permanent = True  # Use cookie to store session.
             flash('You are now logged in.', 'success')
@@ -293,7 +294,7 @@ def not_found(exc):
 
 def main():
     database.create_tables([Entry, FTSEntry], safe=True)
-    app.run(debug=True)
+    # app.run(debug=True)
 
 if __name__ == '__main__':
     main()
