@@ -1,19 +1,12 @@
-{% extends "base.html" %}
-
-{% block title %}Blog entries{% endblock %}
-
-{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Blog entries{% endif %}{% endblock %}
-
-{% block content %}
-  {% for entry in object_list %}
-    <h3>
-      <a href="{% if entry.published %}{{ url_for('detail', slug=entry.slug) }}{% else %}{{ url_for('edit', slug=entry.slug) }}{% endif %}">
-        {{ entry.title }}
-      </a>
-    </h3>
-    <p>Created {{ entry.timestamp.strftime('%m/%d/%Y at %G:%I%p') }}</p>
-  {% else %}
-    <p>No entries have been created yet.</p>
-  {% endfor %}
-  {% include "includes/pagination.html" %}
-{% endblock %}
+<HTML>
+<BODY bgcolor='cyan'>
+<form method='POST' action=''>
+    <center>
+    <H1>Enter your details </H1><br>
+    First Name <input type = 'text' name = 'fname' /><br>
+    Last Name <input type = 'text' name = 'lname' /><br>
+    <input type = 'submit'>
+    </center>
+</form>
+</BODY>
+</HTML>
