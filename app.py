@@ -1,31 +1,58 @@
-from flask import Flask, render_template
-from flask_mysqldb import MySQL
-
-
-
+from flask import Flask, render_template, request
+import pymysql.cursors
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'testuser'
-app.config['MYSQL_PASSWORD'] = 'test123'
-app.config['MYSQL_DB'] = 'formdb'
-
-mysql = MYSQL(app)
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        details = request.form
-        firstName = details['fname']
-        lastname = details['lname']
-        cur = mysql.connection.cursor()
-        cur.execute('INSERT INTO MyUsers(firstName, lastName) VALUES (%s, %s)', (firstName, lastName))
-        mysql.connection.commit()
-        cur.close()
-        return 'success' 
-    return render_template('index.html')
+@app.route('/')
+def student():
+   return render_template('index.html')
+
+@app.route('/result',methods = ['POST', 'GET'])
+def result():
+   if request.method == 'POST':
+      result = request.form
+      allwords = {}
+      try:
+         # Connect to the database MySQL
+         connection = pymysql.connect(host='localhost',
+                                      user='testuser',
+                                      password='test123',
+                                      db='formdb',
+                                      charset='utf8mb4',
+                                      cursorclass=pymysql.cursors.DictCursor)
+
+         with connection.cursor() as cursor:
+            # Create a new recrod
+            word = result['word']
+            meaning = result['meaning']
+            sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
+            cursor.execute(sql, (word, meaning))  # execute 别忘了
+
+         # connection is not autocommit by default. So you must commit to save your changes.
+         connection.commit()
+
+         with connection.cursor() as cursor:
+            sql = 'SELECT * from sqdict'
+            cursor.execute(sql)
+            # sqlresult = cursor.fetchone()  # 只显示第一条row
+            sqlresult = cursor.fetchall()  # all rows
+            print('sqlresult')
+            print(sqlresult)
+            allwords = sqlresult
+      finally:
+         connection.close()
+
+      print('allwords')
+      print(allwords)
+
+      return render_template("result.html",result = result, allwords = allwords)
+
+
+
+
+
+
 
 if __name__ == '__main__':
-    # app.debug = True
-    app.run()
+   app.run(debug = False)
