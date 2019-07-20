@@ -16,8 +16,7 @@ def result():
       try:
          # Connect to the database MySQL
          connection = pymysql.connect(host='localhost',
-                                      user='testuser',
-                                      password='test123',
+                                      user='root',
                                       db='formdb',
                                       charset='utf8mb4',
                                       cursorclass=pymysql.cursors.DictCursor)
