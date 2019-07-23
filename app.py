@@ -15,8 +15,11 @@ def result():
       allwords = {}
       try:
          # Connect to the database MySQL
-         connection = pymysql.connect(host='localhost',
+         connection = pymysql.connect(unix_socket = '/srv/run/mysqld/mysqld.sock',
+                                      host='localhost',
+                                      # user = 'testuser',
                                       user='root',
+                                      # password='test123',
                                       db='formdb',
                                       charset='utf8mb4',
                                       cursorclass=pymysql.cursors.DictCursor)
