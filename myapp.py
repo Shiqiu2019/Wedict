@@ -43,8 +43,8 @@ def result():
                 print(sqlresult)
                 allwords = sqlresult
 
-        except Exception:
-            return 'something error in try'
+        except Exception as e:
+            return e
 
         finally:
             connection.close()
