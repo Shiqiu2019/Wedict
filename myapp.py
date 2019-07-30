@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, json
 import pymysql.cursors
 app = Flask(__name__)
 
@@ -13,16 +13,18 @@ def result():
     if request.method == 'POST':
         result = request.form
         allwords = {}
+
+        connection = pymysql.connect(# unix_socket='/srv/run/mysqld/mysqld.sock',
+                                     host='localhost',
+                                     user = 'testuser',
+                                     # user='root',
+                                     password='test123',
+                                     db='formdb',
+                                     charset='utf8mb4',
+                                     cursorclass=pymysql.cursors.DictCursor)
         try:
              # Connect to the database MySQL
-            connection = pymysql.connect(unix_socket = '/srv/run/mysqld/mysqld.sock',
-                                         host='localhost',
-                                         # user = 'testuser',
-                                         user='root',
-                                         # password='test123',
-                                         db='formdb',
-                                         charset='utf8mb4',
-                                         cursorclass=pymysql.cursors.DictCursor)
+
 
             with connection.cursor() as cursor:
                 # Create a new recrod
@@ -68,23 +70,27 @@ def testpage():
 @app.route('/test',methods = ['POST', 'GET'])
 def test():
     if request.method == 'POST':
-        result = request.form
+        word = 'default'
+        meaning = 'defaultmeaning'
         allwords = {}
-        try:
-             # Connect to the database MySQL
-            connection = pymysql.connect(unix_socket = '/srv/run/mysqld/mysqld.sock',
-                                         host='localhost',
-                                         # user = 'testuser',
-                                         user='root',
-                                         # password='test123',
-                                         db='formdb',
-                                         charset='utf8mb4',
-                                         cursorclass=pymysql.cursors.DictCursor)
 
+        # Connect to the database MySQL
+        connection = pymysql.connect(unix_socket='/srv/run/mysqld/mysqld.sock',
+                                     host='localhost',
+                                     # user = 'testuser',
+                                     user='root',
+                                     # password='test123',
+                                     db='formdb',
+                                     charset='utf8mb4',
+                                     cursorclass=pymysql.cursors.DictCursor)
+
+        try:
             with connection.cursor() as cursor:
                 # Create a new recrod
-                word = result['word']
-                meaning = result['meaning']
+                word = request.form.get('word')
+                print('word')
+                print(word)
+                meaning = request.form.get('meaning')
                 sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
                 cursor.execute(sql, (word, meaning))  # execute 别忘了
 
@@ -109,7 +115,7 @@ def test():
         print('allwords')
         print(allwords)
 
-        return render_template("testresult.html",result = result, allwords = allwords)
+        return render_template("testresult.html",word = word, meaning = meaning, allwords = allwords)
 
 
 
@@ -117,6 +123,9 @@ def test():
         return 'note: request.method is GET'
 
 
+@app.route('/testchinese')
+def testchinese():
+    return '测试中文 已疯'
 
 if __name__ == '__main__':
     app.config['JSON_AS_ASCII'] = False

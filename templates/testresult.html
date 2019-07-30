@@ -1,14 +1,15 @@
 <!doctype html>
 <html>
+   <head>
+    <meta charset="UTF-8">
+    <title>testresult.html</title>
+   </head>
    <body>
-      <p>testresult.html</p>
       <table border = 1>
-         {% for key, value in result.items() %}
             <tr>
-               <th> {{ key }} </th>
-               <td> {{ value }} </td>
+               <th> {{ word }} </th>
+               <td> {{ meaning }} </td>
             </tr>
-         {% endfor %}
       </table>
       <p>other words</p>
       <table border = 1>
