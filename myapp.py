@@ -42,7 +42,7 @@ def contact():
 
                     return 'success'
 
-            except Exception:
+            except Exception as e:
                 return e.format_exc()
 
 
