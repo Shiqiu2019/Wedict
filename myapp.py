@@ -17,16 +17,35 @@ connection = pymysql.connect(unix_socket='/srv/run/mysqld/mysqld.sock',
 
 
 
+
+
 @app.route('/contact', methods = ['GET', 'POST'])
 def contact():
     form = ContactForm()
 
     if request.method == 'POST':
-       if form.validate() == False:
-          flash('All fields are required.')
-          return render_template('contact.html', form = form)
-       else:
-          return 'success'
+        if form.validate() == False:
+            flash('All fields are required.')
+            return render_template('contact.html', form = form)
+        else:
+            name = form.name.data
+            print(name)
+            try:
+                with connection.cursor() as cursor:
+                    # Create a new recrod
+                    word = name
+                    meaning = 'default meaning'
+                    # sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
+                    sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
+                    cursor.execute(sql, (word, meaning))  # execute 别忘了
+                    connection.commit()
+
+                    return 'success'
+
+            except Exception:
+                return e.format_exc()
+
+
     elif request.method == 'GET':
           return render_template('contact.html', form = form)
 
@@ -112,7 +131,7 @@ def test():
             connection.commit()
         except Exception as e:
             print('insert exception')
-            return e
+            return e.format_exc()
 
         print('insert---------- to --------show')
 
@@ -128,7 +147,7 @@ def test():
                 allwords = sqlresult
         except Exception as e:
             print('show exception')
-            return e
+            return e.format_exc()
 
         finally:
             connection.close()
