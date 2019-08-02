@@ -1,3 +1,5 @@
+import sys
+import traceback
 from flask import Flask, render_template, request, json, flash
 from forms import ContactForm
 import pymysql.cursors
@@ -14,9 +16,6 @@ connection = pymysql.connect(unix_socket='/srv/run/mysqld/mysqld.sock',
                                      db='formdb',
                                      charset='utf8mb4',
                                      cursorclass=pymysql.cursors.DictCursor)
-
-
-
 
 
 @app.route('/contact', methods = ['GET', 'POST'])
@@ -43,8 +42,7 @@ def contact():
                     return 'success'
 
             except Exception as e:
-                return e.format_exc()
-
+                traceback.print_exc(limit=1, file=sys.stdout)
 
     elif request.method == 'GET':
           return render_template('contact.html', form = form)
@@ -64,8 +62,6 @@ def result():
 
         try:
              # Connect to the database MySQL
-
-
             with connection.cursor() as cursor:
                 # Create a new recrod
                 word = result['word']
@@ -86,18 +82,12 @@ def result():
                 allwords = sqlresult
 
         except Exception as e:
-            return e
-
-        finally:
-            connection.close()
+            traceback.print_exc(limit=1, file=sys.stdout)
 
         print('allwords')
         print(allwords)
 
         return render_template("result.html",result = result, allwords = allwords)
-
-
-
     else:
         return 'note: request.method is GET'
 
@@ -126,13 +116,12 @@ def test():
                 print(meaning)
                 sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
                 cursor.execute(sql, (word, meaning))  # execute
-
+                # cursor.close()
             # connection is not autocommit by default. So you must commit to save your changes.
             connection.commit()
         except Exception as e:
             print('insert exception')
-            return e.format_exc()
-
+            traceback.print_exc(limit=1, file=sys.stdout)
         print('insert---------- to --------show')
 
         # show data from database
@@ -147,17 +136,11 @@ def test():
                 allwords = sqlresult
         except Exception as e:
             print('show exception')
-            return e.format_exc()
-
-        finally:
-            connection.close()
+            traceback.print_exc(limit=1, file=sys.stdout)
 
         print('allwords')
         print(allwords)
-
         return render_template("testresult.html",word = word, meaning = meaning, allwords = allwords)
-
-
 
     else:
         return 'note: request.method is GET'
@@ -168,5 +151,5 @@ def testchinese():
     return '测试中文 已疯'
 
 if __name__ == '__main__':
-    app.config['JSON_AS_ASCII'] = False
+    # app.config['JSON_AS_ASCII'] = False what does it mean?
     app.run(debug = False)
