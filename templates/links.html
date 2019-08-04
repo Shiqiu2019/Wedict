@@ -1,17 +1,14 @@
-{% from 'bootstrap/form.html' import render_form%}
 {% from 'bootstrap/nav.html' import render_nav_item %}
-
-
 
 {% block styles %}
 <!-- Bootstrap CSS -->
 {{ bootstrap.load_css() }}
 {% endblock %}
-
 {% block scripts %}
 <!-- Optional JavaScript -->
 {{ bootstrap.load_js() }}
 {% endblock %}
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="navbar-nav mr-auto">
         {{ render_nav_item('home', 'Home') }}
@@ -23,12 +20,5 @@
 </nav>
 
 
-{% block content %}
-<form method="post">
-    <div class="form-group">
-        <div class="col-sm-10">
-            {{ render_form(contactform) }}
-        </div>
-    </div>
-</form>
-{% endblock %}
+<p><a href="https://bootstrap-flask.readthedocs.io/en/latest/index.html">Bootstrap-flask</a></p>
+<p><a href="https://www.w3schools.com/bootstrap4/">Bootstrap4</a></p>

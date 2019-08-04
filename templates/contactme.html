@@ -1,7 +1,4 @@
-{% from 'bootstrap/form.html' import render_form%}
 {% from 'bootstrap/nav.html' import render_nav_item %}
-
-
 
 {% block styles %}
 <!-- Bootstrap CSS -->
@@ -12,6 +9,8 @@
 <!-- Optional JavaScript -->
 {{ bootstrap.load_js() }}
 {% endblock %}
+
+{% block content %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="navbar-nav mr-auto">
         {{ render_nav_item('home', 'Home') }}
@@ -22,13 +21,8 @@
     </div>
 </nav>
 
+<p><a href="https://weibo.com/5904392048/profile?topnav=1&wvr=6&is_all=1">新浪微博：十十十秋</a></p>
+<p>Email: snowforwork@outlook.com</p>
 
-{% block content %}
-<form method="post">
-    <div class="form-group">
-        <div class="col-sm-10">
-            {{ render_form(contactform) }}
-        </div>
-    </div>
-</form>
 {% endblock %}
+

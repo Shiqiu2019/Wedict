@@ -1,76 +1,88 @@
 import sys
 import traceback
 from flask import Flask, render_template, request, json, flash
-from forms import ContactForm
+from forms import ContactForm, WordEditForm
 import pymysql.cursors
+from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
+from flask_bootstrap import Bootstrap
+
+
 
 app = Flask(__name__)
+bootstrap = Bootstrap(app)
 app.secret_key = 'secret 1 development key'
 
 # Connect to the database MySQL
 connection = pymysql.connect(unix_socket='/srv/run/mysqld/mysqld.sock',
-                                     host='localhost',
-                                     # user = 'testuser',
-                                     user='root',
-                                     # password='test123',
-                                     db='formdb',
-                                     charset='utf8mb4',
-                                     cursorclass=pymysql.cursors.DictCursor)
+                             host='localhost',
+                             # user = 'testuser',
+                             user='root',
+                             # password='test123',
+                             db='formdb',
+                             charset='utf8mb4',
+                             cursorclass=pymysql.cursors.DictCursor)
 
 
-@app.route('/contact', methods = ['GET', 'POST'])
+@app.route('/')
+def home():
+    return render_template('homepage.html')
+
+@app.route('/contactme')
+def contactme():
+    return render_template('contactme.html')
+
+
+@app.route('/contact',methods = ['POST', 'GET'])
 def contact():
-    form = ContactForm()
-
+    contactform= ContactForm()
     if request.method == 'POST':
-        if form.validate() == False:
+        if contactform.validate() == False:
             flash('All fields are required.')
-            return render_template('contact.html', form = form)
+            return render_template('contact.html', contactform = contactform)
         else:
-            name = form.name.data
-            print(name)
             try:
+                # The connection will be closed for you as soon as execution leaves the <with> block, no matter by what route.
                 with connection.cursor() as cursor:
                     # Create a new recrod
-                    word = name
-                    meaning = 'default meaning'
+                    name = contactform.name.data
+                    email = contactform.email.data
+                    goodatfields = contactform.goodatfields.data
+                    comment = contactform.comment.data
+                    wechat = contactform.wechat.data
                     # sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
-                    sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
-                    cursor.execute(sql, (word, meaning))  # execute 别忘了
+                    sql = 'INSERT INTO contacttb (name, email, goodatfields, comment, wechat) VALUES (%s, %s, %s, %s, %s)'
+                    cursor.execute(sql, (name, email, goodatfields, comment, wechat))  # execute 别忘了
                     connection.commit()
-
+                    cursor.close()
                     return 'success'
 
             except Exception as e:
                 traceback.print_exc(limit=1, file=sys.stdout)
+    else:
+        return render_template('contact.html', contactform = contactform)
 
-    elif request.method == 'GET':
-          return render_template('contact.html', form = form)
-
-
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/result',methods = ['POST', 'GET'])
-def result():
+@app.route('/edit',methods = ['POST', 'GET'])
+def edit():
+    wordedit_form = WordEditForm()
     if request.method == 'POST':
         result = request.form
+        print('test')
+        print(result)
+        dict_result = result.to_dict()
+        print(dict_result)
         allwords = {}
-
         try:
-             # Connect to the database MySQL
+            # Connect to the database MySQL
             with connection.cursor() as cursor:
                 # Create a new recrod
                 word = result['word']
                 meaning = result['meaning']
-                sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
-                cursor.execute(sql, (word, meaning))  # execute 别忘了
-
-            # connection is not autocommit by default. So you must commit to save your changes.
-            connection.commit()
+                classify = result['classify']
+                sql = 'INSERT INTO sqdict (word, meaning, classify) VALUES (%s, %s, %s)'
+                cursor.execute(sql, (word, meaning, classify))  # execute 别忘了
+                # connection is not autocommit by default. So you must commit to save your changes.
+                connection.commit()
+                cursor.close()
 
             with connection.cursor() as cursor:
                 sql = 'SELECT * from sqdict'
@@ -78,77 +90,23 @@ def result():
                 # sqlresult = cursor.fetchone()  # only show the first row
                 sqlresult = cursor.fetchall()  # all rows
                 print('sqlresult')
-                print(sqlresult)
+                # print(sqlresult)
                 allwords = sqlresult
+                cursor.close()
 
         except Exception as e:
             traceback.print_exc(limit=1, file=sys.stdout)
-
         print('allwords')
         print(allwords)
-
-        return render_template("result.html",result = result, allwords = allwords)
+        return render_template("result.html",dict_result = dict_result, allwords = allwords)
     else:
-        return 'note: request.method is GET'
+        return render_template('edit.html', wordedit_form=wordedit_form)
+
+@app.route('/links')
+def links():
+    return render_template('links.html')
 
 
-@app.route('/testpage')
-def testpage():
-    return render_template('testpage.html')
-
-
-@app.route('/test',methods = ['POST', 'GET'])
-def test():
-    if request.method == 'POST':
-        word = 'default'
-        meaning = 'defaultmeaning'
-        allwords = {}
-
-        # insert value to database
-        try:
-            with connection.cursor() as cursor:
-                # Create a new recrod
-                word = request.form.get('word')
-                print('word: ')
-                print(word)
-                meaning = request.form.get('meaning')
-                print('meaning: ')
-                print(meaning)
-                sql = 'INSERT INTO sqdict (word, meaning) VALUES (%s, %s)'
-                cursor.execute(sql, (word, meaning))  # execute
-                # cursor.close()
-            # connection is not autocommit by default. So you must commit to save your changes.
-            connection.commit()
-        except Exception as e:
-            print('insert exception')
-            traceback.print_exc(limit=1, file=sys.stdout)
-        print('insert---------- to --------show')
-
-        # show data from database
-        try:
-            with connection.cursor() as cursor:
-                sql = 'SELECT * from sqdict'
-                cursor.execute(sql)
-                # sqlresult = cursor.fetchone()  # only show the first row
-                sqlresult = cursor.fetchall()  # all rows
-                print('sqlresult')
-                print(sqlresult)
-                allwords = sqlresult
-        except Exception as e:
-            print('show exception')
-            traceback.print_exc(limit=1, file=sys.stdout)
-
-        print('allwords')
-        print(allwords)
-        return render_template("testresult.html",word = word, meaning = meaning, allwords = allwords)
-
-    else:
-        return 'note: request.method is GET'
-
-
-@app.route('/testchinese')
-def testchinese():
-    return '测试中文 已疯'
 
 if __name__ == '__main__':
     # app.config['JSON_AS_ASCII'] = False what does it mean?

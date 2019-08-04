@@ -1,23 +1,52 @@
-<!doctype html>
-<html>
-   <body>
-      <table border = 1>
-         {% for key, value in result.items() %}
-            <tr>
-               <th> {{ key }} </th>
-               <td> {{ value }} </td>
-            </tr>
-         {% endfor %}
-      </table>
-      <p>other words</p>
-      <table border = 1>
-         {% for row in allwords %}
-            <tr>
-               <th> {{ row['id'] }} </th>
-               <td> {{ row['word'] }} </td>
-               <td> {{ row['meaning'] }} </td>
-            </tr>
-         {% endfor %}
-      </table>
-   </body>
+{% from 'bootstrap/nav.html' import render_nav_item %}
+
+{% block styles %}
+<!-- Bootstrap CSS -->
+{{ bootstrap.load_css() }}
+{% endblock %}
+
+{% block scripts %}
+<!-- Optional JavaScript -->
+{{ bootstrap.load_js() }}
+{% endblock %}
+
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="navbar-nav mr-auto">
+        {{ render_nav_item('home', 'Home') }}
+        {{ render_nav_item('edit', 'Edit') }}
+        {{ render_nav_item('contact', 'Advice') }}
+        {{ render_nav_item('links', 'Links') }}
+        {{ render_nav_item('contactme', 'Contactme') }}
+    </div>
+</nav>
+
+<br>
+
+<table border = 1>
+{% for key, value in dict_result.items() %}
+    {% if key != 'submit' and key != 'csrf_token' %}
+        <tr>
+           <th> {{ key }} </th>
+           <td> {{ value }} </td>
+        </tr>
+    {% endif %}
+{% endfor %}
+</table>
+
+<br>
+
+<table border = 1>
+{% for row in allwords %}
+    <tr>
+        <th> {{ row['id'] }} </th>
+        <td> {{ row['word'] }} </td>
+        <td> {{ row['meaning'] }} </td>
+        <td> {{ row['classify'] }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+
+</body>
 </html>
