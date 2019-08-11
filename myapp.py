@@ -9,11 +9,7 @@ from flask_bootstrap import Bootstrap
 
 
 app = Flask(__name__)
-<<<<<<< HEAD
 mybootstrap = Bootstrap(app)
-=======
-bootstrap = Bootstrap(app)
->>>>>>> 600ffda1aa51eb56afdf570d488cdf8ad744c555
 app.secret_key = 'secret 1 development key'
 
 # Connect to the database MySQL
@@ -29,11 +25,7 @@ connection = pymysql.connect(unix_socket='/srv/run/mysqld/mysqld.sock',
 
 @app.route('/')
 def home():
-<<<<<<< HEAD
     return render_template('homepage.html')
-=======
-    return render_template('homepage.html',bootstrap = bootstrap)
->>>>>>> 600ffda1aa51eb56afdf570d488cdf8ad744c555
 
 @app.route('/contactme')
 def contactme():
