@@ -25,7 +25,7 @@ connection = pymysql.connect(unix_socket='/srv/run/mysqld/mysqld.sock',
 
 @app.route('/')
 def home():
-    return render_template('homepage.html')
+    return render_template('homepage.html',mybootstrap=mybootstrap)
 
 @app.route('/contactme')
 def contactme():
