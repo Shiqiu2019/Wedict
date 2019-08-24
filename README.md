@@ -16,3 +16,6 @@ They can record the plant's info using the co-dictionary. Like wikipedia, but mo
 “加油“算是网络语言吗？还没有查询过，但是肯定是一种新的语言。<br>
 以及“给力”的“给”字，会不会来源于什么方言，因为当时一开始流行的时候老觉得这个动词“给”用的好别扭<br>
 胡言乱语一通，就酱<br>
+
+
+Contact me if any advice: snowforwork@outlook.com
