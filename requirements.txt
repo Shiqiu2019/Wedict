@@ -4,7 +4,6 @@ Click==7.0
 dominate==2.3.5
 et-xmlfile==1.0.1
 Flask==1.0.3
-Flask-Bootstrap==3.3.7.1
 Flask-Login==0.4.1
 Flask-MySQLdb==0.2.0
 Flask-SQLAlchemy==2.4.0
